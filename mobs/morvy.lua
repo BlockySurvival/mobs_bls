@@ -55,10 +55,10 @@ mobs:register_mob("bls_mobs:morvy", {
     },
 
     custom_attack = function(self)
-        set_animation(self, "stand")
+        mobs.set_animation(self, "stand")
         self.morvy_counter = (self.morvy_counter or 0) + 1
         if self.morvy_counter == 4 then
-            set_animation(self, "punch")
+            mobs.set_animation(self, "punch")
             self.morvy_counter = 0
             local counter = 0
 
@@ -67,7 +67,8 @@ mobs:register_mob("bls_mobs:morvy", {
 
             p.y = p.y + 1.5
             s.y = s.y + 1.5
-            if line_of_sight_water(self, p, s) == true then
+            -- No `explosion` function found. Ignoring in LuaCheck.
+            if line_of_sight_water(self, p, s) == true then -- luacheck: ignore
                 --[[play attack sound
                 if self.sounds.attack then
                     minetest.sound_play(self.sounds.attack, {

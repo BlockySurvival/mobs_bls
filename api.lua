@@ -1,10 +1,3 @@
--- set content id's
-local c_air = minetest.get_content_id("air")
-local c_ignore = minetest.get_content_id("ignore")
-local c_obsidian = minetest.get_content_id("default:obsidian")
-local c_brick = minetest.get_content_id("default:obsidianbrick")
-local c_chest = minetest.get_content_id("default:chest_locked")
-
 function bls_mobs:virulence(mobe)
 	if not bls_mobs.lessvirulent then
 		return 0
@@ -92,8 +85,6 @@ function bls_mobs.check_for_death_hydra(self)
 		end
 		return false
 	end
-	local pos = self.object:getpos()
-	local obj = nil
 	if self.sounds.death ~= nil then
 		minetest.sound_play(self.sounds.death,{
 			object = self.object,
@@ -166,8 +157,7 @@ function bls_mobs.digging_attack(
 				local n = minetest.env:get_node(pos1).name
 				--local up = {x=pos.x+dx, y=pos.y+dy, z=pos.z+dz}
 				if group == nil then
-					if minetest.get_item_group(n, "unbreakable") == 1 or minetest.is_protected(pos1, "") or (n == "bones:bones" and not bls_mobs:affectbones(self) ) then
-					else
+					if minetest.get_item_group(n, "unbreakable") ~= 1 or not minetest.is_protected(pos1, "") or (n ~= "bones:bones" and bls_mobs:affectbones(self) ) then
 						--minetest.env:set_node(p, {name="air"})
 						minetest.remove_node(pos1)
 					end
@@ -270,14 +260,12 @@ function bls_mobs.midas_ability(		--ability to transform every blocks it touches
 	)
 	--if math.random(1,bls_mobs:virulence(self)) ~= 1 then return end
 
-	local v = self.object:getvelocity()
 	local pos = self.object:getpos()
 
 	if minetest.is_protected(pos, "") then
 		return
 	end
 
-	local max = 0
 	local yaw = (self.object:getyaw() + self.rotate) or 0
 	local x = math.sin(yaw)*-1
 	local z = math.cos(yaw)
@@ -307,8 +295,7 @@ function bls_mobs.midas_ability(		--ability to transform every blocks it touches
 				local p = {x=pos.x+dx, y=pos.y+dy, z=pos.z+dz}
 				local n = minetest.env:get_node(p).name
 
-				if minetest.get_item_group(n, "unbreakable") == 1 or minetest.is_protected(p, "") or n=="air" or (n == "bones:bones" and not bls_mobs:affectbones(self)) then
-				else
+				if minetest.get_item_group(n, "unbreakable") ~= 1 or not minetest.is_protected(p, "") or n ~= "air" or (n ~= "bones:bones" and bls_mobs:affectbones(self)) then
 					minetest.env:set_node(p, {name=m_block})
 				end
 			end
@@ -323,8 +310,6 @@ local loss_prob = {}
 
 loss_prob["default:cobble"] = 3
 loss_prob["default:dirt"] = 4
-
-local tnt_radius = tonumber(minetest.setting_get("tnt_radius") or 3)
 
 local cid_data = {}
 minetest.after(0, function()
@@ -472,6 +457,21 @@ local function calc_velocity(pos1, pos2, old_vel, power)
 	return vel
 end
 
+local function add_drop(drops, item)
+	item = ItemStack(item)
+	local name = item:get_name()
+	if loss_prob[name] ~= nil and math.random(1, loss_prob[name]) == 1 then
+		return
+	end
+
+	local drop = drops[name]
+	if drop == nil then
+		drops[name] = item
+	else
+		drop:set_count(drop:get_count() + item:get_count())
+	end
+end
+
 local function entity_physics(pos, radius, drops)
 	local objs = minetest.get_objects_inside_radius(pos, radius)
 	for _, obj in pairs(objs) do
@@ -524,21 +524,6 @@ local function entity_physics(pos, radius, drops)
 				add_drop(drops, item)
 			end
 		end
-	end
-end
-
-local function add_drop(drops, item)
-	item = ItemStack(item)
-	local name = item:get_name()
-	if loss_prob[name] ~= nil and math.random(1, loss_prob[name]) == 1 then
-		return
-	end
-
-	local drop = drops[name]
-	if drop == nil then
-		drops[name] = item
-	else
-		drop:set_count(drop:get_count() + item:get_count())
 	end
 end
 
@@ -645,7 +630,7 @@ local function tnt_explode(pos, radius, ignore_protection, ignore_on_blast)
 		local s = vector.add(pos, rad)
 		local r = vector.length(rad)
 		if r / radius < 1.4 then
-			nodeupdate_single(s)
+			nodeupdate_single(s) -- luacheck: ignore
 		end
 	end
 	end

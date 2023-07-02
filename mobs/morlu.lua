@@ -17,8 +17,7 @@ mobs:register_mob("bls_mobs:morlu", {
     runaway = true,
     jump = true,
     sounds = {
-        random = "morlu1",
-        random = "morlu2"
+        random = "morlu1"
     },
     drops = {
         {name = "bls_mobs:life_energy",
@@ -71,9 +70,9 @@ mobs:register_mob("bls_mobs:morlu", {
 
         if self.flag == 1 then
             self.state = ""
-            set_animation(self, "run")
+            mobs.set_animation(self, "run")
             self.object:setyaw(self.dir)
-            set_velocity(self, 4)
+            mobs.set_velocity(self, 4)
 
             if os.time() - self.morlu_timer > 3 then
                 self.flag = 0
@@ -91,12 +90,12 @@ mobs:register_mob("bls_mobs:morlu", {
 
             local s = self.object:getpos()
             local p = self.attack:getpos()
-            set_animation(self, "punch")
+            mobs.set_animation(self, "punch")
             local m = 1
 
             if self.attack:is_player() then
                 if minetest.get_modpath("3d_armor") then
-                    local pname, player_inv, armor_inv, ppos = armor:get_valid_player(self.attack, "[set_player_armor]")
+                    local armor_inv = armor:get_valid_player(self.attack, "[set_player_armor]")
                     local pname = self.attack:get_player_name()
                     local player_inv = minetest.get_inventory({type='player', name = pname})
                     if player_inv:is_empty('armor') then
@@ -160,7 +159,7 @@ mobs:register_mob("bls_mobs:morlu", {
                                 nname --texture
                             )
 
-                            minetest.after(1, function (self)
+                            minetest.after(1, function (self) -- luacheck: ignore
                                 if self then
 
                                     local armor_stack = player_inv:get_stack("armor", armor_elements[steal_pos].pos)
@@ -184,7 +183,7 @@ mobs:register_mob("bls_mobs:morlu", {
                                         self.inventory[self.invnum].name = armor_elements[steal_pos].name
                                     end
 
-                                    set_animation(self, "run")
+                                    mobs.set_animation(self, "run")
                                     self.flag = 1
                                     self.morlu_timer = os.time()
                                     self.curr_attack = self.attack
@@ -193,17 +192,17 @@ mobs:register_mob("bls_mobs:morlu", {
                                     self.dir = pyaw
                                     self.object:setyaw(pyaw)
                                     if self then
-                                        set_velocity(self, 4)
+                                        mobs.set_velocity(self, 4)
                                     end
                                 end
                             end,self)
                         end
                     end
                 else
-                    local s = self.object:getpos()
-                    local p = self.attack:getpos()
+                    s = self.object:getpos()
+                    p = self.attack:getpos()
 
-                    set_animation(self, "punch")
+                    mobs.set_animation(self, "punch")
 
                     if minetest.line_of_sight({x = p.x, y = p.y +1.5, z = p.z}, {x = s.x, y = s.y +1.5, z = s.z}) == true then
                         -- play attack sound

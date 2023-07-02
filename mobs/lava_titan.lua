@@ -41,7 +41,6 @@ mobs:register_mob("bls_mobs:lava_titan", {
     light_damage = 0,
     lava_damage = 0,
     on_rightclick = nil,
-    floats = 0,
     blood_texture="stone_blood.png",
     blood_amount=50,
     knock_back=0,

@@ -79,12 +79,12 @@ mobs:register_mob("bls_mobs:morvalar", {
 
             local s = self.object:getpos()
             local p = self.attack:getpos()
-            set_animation(self, "punch")
+            mobs.set_animation(self, "punch")
             local m = 1
 
             if self.attack:is_player() then
                 if minetest.get_modpath("3d_armor") then
-                    local pname, player_inv, armor_inv, ppos = armor:get_valid_player(self.attack, "[set_player_armor]")
+                    local armor_inv = armor:get_valid_player(self.attack, "[set_player_armor]")
                     local pname = self.attack:get_player_name()
                     local player_inv = minetest.get_inventory({type='player', name = pname})
                     if player_inv:is_empty('armor') then
@@ -138,7 +138,7 @@ mobs:register_mob("bls_mobs:morvalar", {
                                 nname --texture
                             )
 
-                            minetest.after(1, function (self)
+                            minetest.after(1, function (self) -- luacheck: ignore
 
                                 local armor_stack = player_inv:get_stack("armor", armor_elements[steal_pos].pos)
                                 armor_stack:take_item()
@@ -154,10 +154,10 @@ mobs:register_mob("bls_mobs:morvalar", {
                         end
                     end
                 else
-                    local s = self.object:getpos()
-                    local p = self.attack:getpos()
+                    s = self.object:getpos()
+                    p = self.attack:getpos()
 
-                    set_animation(self, "punch")
+                    mobs.set_animation(self, "punch")
 
                     if minetest.line_of_sight({x = p.x, y = p.y +1.5, z = p.z}, {x = s.x, y = s.y +1.5, z = s.z}) == true then
                         -- play attack sound
@@ -180,7 +180,7 @@ mobs:register_mob("bls_mobs:morvalar", {
     on_die = function(self)
         local pos = self.object:getpos()
         self.object:remove()
-        add_entity_and_particles("bls_mobs:morvalar6", pos, "morparticle.png", 10)
+        bls_mobs.add_entity_and_particles("bls_mobs:morvalar6", pos, "morparticle.png", 10)
     end,
 })
 
@@ -240,19 +240,17 @@ mobs:register_mob("bls_mobs:morvalar6", {
 
             local s = self.object:getpos()
             local p = self.attack:getpos()
-            set_animation(self, "punch")
+            mobs.set_animation(self, "punch")
             local m = 2
 
 
 
-            minetest.after(1, function (self)
+            minetest.after(1, function (self) -- luacheck: ignore
                 if self.attack:is_player() then
                     local pname = self.attack:get_player_name()
                     local player_inv = minetest.get_inventory({type='player', name = pname})
 
-                    if player_inv:is_empty('main') then
-                        --minetest.chat_send_all("Inventory empty")
-                    else
+                    if player_inv:is_empty('main') ~= true then
                         local imhungry = 0
                         for i = 1,32 do
                             --minetest.chat_send_all("Inventory is not empty")
@@ -300,7 +298,7 @@ mobs:register_mob("bls_mobs:morvalar6", {
     on_die = function(self)
         local pos = self.object:getpos()
         self.object:remove()
-        add_entity_and_particles("bls_mobs:morvalar5", pos, "morparticle.png", 10)
+        bls_mobs.add_entity_and_particles("bls_mobs:morvalar5", pos, "morparticle.png", 10)
     end,
 })
 
@@ -359,11 +357,10 @@ mobs:register_mob("bls_mobs:morvalar5", {
         self.dir = (self.dir or 0)
         if (os.time() - self.morvalar5_timer) > 2 then
 
-            local s = self.object:getpos()
             local p = self.attack:getpos()
-            minetest.after(2, function(self)
-                set_animation(self, "punch")
-                tnt_boom_bls_mobs(p, {damage_radius=6,radius=5,ignore_protection=false})
+            minetest.after(2, function(self) -- luacheck: ignore
+                mobs.set_animation(self, "punch")
+                bls_mobs.tnt_boom_bls_mobs(p, {damage_radius=6,radius=5,ignore_protection=false})
                 self.morvalar5_timer = os.time()
             end,self)
         end
@@ -371,7 +368,7 @@ mobs:register_mob("bls_mobs:morvalar5", {
     on_die = function(self)
         local pos = self.object:getpos()
         self.object:remove()
-        add_entity_and_particles("bls_mobs:morvalar4", pos, "morparticle.png", 10)
+        bls_mobs.add_entity_and_particles("bls_mobs:morvalar4", pos, "morparticle.png", 10)
     end,
 })
 
@@ -431,7 +428,7 @@ mobs:register_mob("bls_mobs:morvalar4", {
             local s = self.object:getpos()
             local p = self.attack:getpos()
 
-            set_animation(self, "punch")
+            mobs.set_animation(self, "punch")
 
             if minetest.line_of_sight({x = p.x, y = p.y +1.5, z = p.z}, {x = s.x, y = s.y +1.5, z = s.z}) == true then
                 -- play attack sound
@@ -473,7 +470,7 @@ mobs:register_mob("bls_mobs:morvalar4", {
                     d.x = p.x + math.random(-m,m)
                     d.z = p.z + math.random(-m,m)
                     d.y = p.y
-                    local dist = dist_pos(d, p)
+                    local dist = bls_mobs.dist_pos(d, p)
                     if dist>=2 then
                         for j = -3,3 do
                             ty = d.y + j
@@ -494,7 +491,7 @@ mobs:register_mob("bls_mobs:morvalar4", {
     on_die = function(self)
         local pos = self.object:getpos()
         self.object:remove()
-        add_entity_and_particles("bls_mobs:morvalar3", pos, "morparticle.png", 10)
+        bls_mobs.add_entity_and_particles("bls_mobs:morvalar3", pos, "morparticle.png", 10)
     end,
 })
 
@@ -555,7 +552,7 @@ mobs:register_mob("bls_mobs:morvalar3", {
     on_die = function(self)
         local pos = self.object:getpos()
         self.object:remove()
-        add_entity_and_particles("bls_mobs:morvalar2", pos, "morparticle.png", 10)
+        bls_mobs.add_entity_and_particles("bls_mobs:morvalar2", pos, "morparticle.png", 10)
     end,
 })
 
@@ -626,36 +623,35 @@ mobs:register_mob("bls_mobs:morvalar2", {
             end
             minetest.chat_send_all("Ne ho contati: "..counter)
             if counter < 2 then
-                set_animation(self, "punch")
+                mobs.set_animation(self, "punch")
 
                 local v = vector.subtract(p,s)
                 --local v = {x = s.x-p.x, y = s.y-p.y , z= s.z-p.z}
                 v = vector.normalize(v)
-                local per = perpendicular_vector(v)
+                local per = bls_mobs.perpendicular_vector(v)
                 local p1 = vector.add(s,v)
                 p1 = vector.subtract(p1,vector.multiply(per,4))
 
-                add_entity_and_particles("bls_mobs:morwa", p1, "morparticle.png", 1)
+                bls_mobs.add_entity_and_particles("bls_mobs:morwa", p1, "morparticle.png", 1)
                 p1 = vector.add(p1,per)
-                add_entity_and_particles("bls_mobs:mordain", p1, "morparticle.png", 1)
+                bls_mobs.add_entity_and_particles("bls_mobs:mordain", p1, "morparticle.png", 1)
                 p1 = vector.add(p1,per)
-                add_entity_and_particles("bls_mobs:morgre", p1, "morparticle.png", 1)
+                bls_mobs.add_entity_and_particles("bls_mobs:morgre", p1, "morparticle.png", 1)
                 p1 = vector.add(p1,per)
-                add_entity_and_particles("bls_mobs:morlu", p1, "morparticle.png", 1)
+                bls_mobs.add_entity_and_particles("bls_mobs:morlu", p1, "morparticle.png", 1)
                 p1 = vector.add(p1,per)
-                add_entity_and_particles("bls_mobs:morgut", p1, "morparticle.png", 1)
+                bls_mobs.add_entity_and_particles("bls_mobs:morgut", p1, "morparticle.png", 1)
                 p1 = vector.add(p1,per)
-                add_entity_and_particles("bls_mobs:morde", p1, "morparticle.png", 1)
+                bls_mobs.add_entity_and_particles("bls_mobs:morde", p1, "morparticle.png", 1)
                 p1 = vector.add(p1,per)
-                add_entity_and_particles("bls_mobs:morvy", p1, "morparticle.png", 1)
-                p1 = vector.add(p1,per)
+                bls_mobs.add_entity_and_particles("bls_mobs:morvy", p1, "morparticle.png", 1)
             end
         end
     end,
     on_die = function(self)
         local pos = self.object:getpos()
         self.object:remove()
-        add_entity_and_particles("bls_mobs:morvalar1", pos, "morparticle.png", 10)
+        bls_mobs.add_entity_and_particles("bls_mobs:morvalar1", pos, "morparticle.png", 10)
     end,
 })
 
@@ -715,9 +711,7 @@ mobs:register_mob("bls_mobs:morvalar1", {
             local s = self.object:getpos()
             local p = self.attack:getpos()
 
-            set_animation(self, "punch")
-
-            local m = 3
+            mobs.set_animation(self, "punch")
 
             if minetest.line_of_sight({x = p.x, y = p.y +1.5, z = p.z}, {x = s.x, y = s.y +1.5, z = s.z}) == true then
                 -- play attack sound
@@ -739,7 +733,7 @@ mobs:register_mob("bls_mobs:morvalar1", {
     on_die = function(self)
         local pos = self.object:getpos()
         self.object:remove()
-        add_entity_and_particles("bls_mobs:morvalar0", pos, "morparticle.png", 10)
+        bls_mobs.add_entity_and_particles("bls_mobs:morvalar0", pos, "morparticle.png", 10)
     end,
 })
 
@@ -805,7 +799,7 @@ mobs:register_mob("bls_mobs:morvalar0", {
             local s = self.object:getpos()
             local p = self.attack:getpos()
 
-            set_animation(self, "punch")
+            mobs.set_animation(self, "punch")
 
             local m = 5     --velocity of the kamehameha
             local obj = minetest.add_entity(s, "bls_mobs:kamehameha_bad")
@@ -871,17 +865,17 @@ minetest.register_entity("bls_mobs:kamehameha_bad", {
                 end
             end
         end
-        local objects = minetest.env:get_objects_inside_radius(pos, 1)
+        objects = minetest.env:get_objects_inside_radius(pos, 1)
         for _,obj in ipairs(objects) do
             if obj:is_player() then
-                tnt_boom_bls_mobs(pos, {damage_radius=6,radius=5,ignore_protection=false})
+                bls_mobs.tnt_boom_bls_mobs(pos, {damage_radius=6,radius=5,ignore_protection=false})
                 self.object:remove()
                 minetest.chat_send_all("Dentro il raggio piccolo")
             end
             if obj:get_luaentity() then
                 local name = obj:get_luaentity().name
                 if name ~= "bls_mobs:morvalar0" and name ~="bls_mobs:kamehameha_bad" then
-                    tnt_boom_bls_mobs(pos, {damage_radius=6,radius=5,ignore_protection=false})
+                    bls_mobs.tnt_boom_bls_mobs(pos, {damage_radius=6,radius=5,ignore_protection=false})
                     self.object:remove()
                 end
             end
@@ -889,7 +883,8 @@ minetest.register_entity("bls_mobs:kamehameha_bad", {
 
         local nodename = minetest.env:get_node(pos).name
         if nodename ~= "air" then
-            explosion(pos, 5, 0, 1, true)
+            -- No `explosion` function found. Ignoring in LuaCheck.
+            explosion(pos, 5, 0, 1, true) -- luacheck: ignore
             self.object:remove()
         end
     end,

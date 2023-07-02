@@ -59,15 +59,13 @@ mobs:register_arrow("bls_mobs:phoenix_arrow", {
             local dy = math.random(-1,1)
             local dz = math.random(-1,1)
             local p = {x=pos.x+dx, y=pos.y+dy, z=pos.z+dz}
-            local n = minetest.env:get_node(p).name
+            n = minetest.env:get_node(p).name
             if n=="air" then
                 minetest.env:set_node(p, {name="bls_mobs:phoenix_fire"})
             end
         end
-
     end,
 })
-
 
 mobs:register_arrow("bls_mobs:spine", {
     visual = "sprite",
@@ -94,14 +92,13 @@ function bls_mobs:affectbones(mobe) -- as function for adaptable heuristic
     return not bls_mobs.safebones
 end
 
-function bls_mobs.ice_explosion(pos)
+function bls_mobs:ice_explosion(pos)
     for i=pos.x-math.random(0, 1), pos.x+math.random(0, 1), 1 do
         for j=pos.y-1, pos.y+4, 1 do
             for k=pos.z-math.random(0, 1), pos.z+math.random(0, 1), 1 do
                 local p = {x=i, y=j, z=k}
                 local n = minetest.env:get_node(p).name
-                if minetest.get_item_group(n, "unbreakable") == 1 or minetest.is_protected(p, "") or (n == "bones:bones" and not bls_mobs:affectbones(self)) then
-                else
+                if minetest.get_item_group(n, "unbreakable") ~= 1 or not minetest.is_protected(p, "") or (n ~= "bones:bones" and bls_mobs:affectbones(self)) then
                     minetest.set_node({x=i, y=j, z=k}, {name="default:ice"})
                 end
             end
@@ -128,7 +125,6 @@ mobs:register_arrow("bls_mobs:snow_arrow", {
         bls_mobs.ice_explosion(pos)
     end,
 })
-
 
 mobs:register_arrow("bls_mobs:webball", {
     visual = "sprite",
@@ -165,7 +161,7 @@ function bls_mobs.explosion_web(pos)
         for j=pos.y-3, pos.y, 1 do
             for k=pos.z-1, pos.z+1, 1 do
                 local p = {x=i,y=j,z=k}
-                local k = {x=i,y=j+1,z=k}
+                k = {x=i,y=j+1,z=k}
                 local current = minetest.env:get_node(p).name
                 local ontop  = minetest.env:get_node(k).name
                 if     (current ~= "air") and
@@ -217,7 +213,7 @@ function bls_mobs.explosion_thickweb(pos)
         for j=pos.y-2, pos.y, 1 do
             for k=pos.z+0, pos.z+0, 1 do
                 local p = {x=i,y=j,z=k}
-                local k = {x=i,y=j+1,z=k}
+                k = {x=i,y=j+1,z=k}
                 local current = minetest.env:get_node(p).name
                 local ontop  = minetest.env:get_node(k).name
                 if     (current ~= "air") and
