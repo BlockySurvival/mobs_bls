@@ -69,9 +69,9 @@ mobs:register_mob("bls_mobs:morgut", {
 
         if self.flag == 1 then
             self.state = ""
-            set_animation(self, "run")
+            mobs.set_animation(self, "run")
             self.object:setyaw(self.dir)
-            set_velocity(self, 4)
+            mobs.set_velocity(self, 4)
 
             if os.time() - self.morgut_timer > 3 then
                 self.flag = 0
@@ -89,7 +89,7 @@ mobs:register_mob("bls_mobs:morgut", {
             if self.attack then
                 local s = self.object:getpos()
                 local p = self.attack:getpos()
-                set_animation(self, "punch")
+                mobs.set_animation(self, "punch")
                 local m = 2
 
                 minetest.add_particlespawner(
@@ -109,15 +109,13 @@ mobs:register_mob("bls_mobs:morgut", {
                     "roasted_duck_legs.png" --texture
                 )
 
-                minetest.after(1, function (self)
+                minetest.after(1, function (self) -- luacheck: ignore
                     if self then
                         if self.attack:is_player() then
                             local pname = self.attack:get_player_name()
                             local player_inv = minetest.get_inventory({type='player', name = pname})
 
-                            if player_inv:is_empty('main') then
-                                --minetest.chat_send_all("Inventory empty")
-                            else
+                            if player_inv:is_empty('main') ~= true then
                                 for i = 1,32 do
                                     --minetest.chat_send_all("Inventory is not empty")
                                     local items = player_inv:get_stack('main', i)
@@ -149,7 +147,7 @@ mobs:register_mob("bls_mobs:morgut", {
                                     end
                                 end
                             end
-                            set_animation(self, "run")
+                            mobs.set_animation(self, "run")
                             self.flag = 1
                             self.morgut_timer = os.time()
                             self.curr_attack = self.attack
@@ -158,7 +156,7 @@ mobs:register_mob("bls_mobs:morgut", {
                             self.dir = pyaw
                             self.object:setyaw(pyaw)
                             if self then
-                                set_velocity(self, 4)
+                                mobs.set_velocity(self, 4)
                             end
                         end
                     end
@@ -169,7 +167,6 @@ mobs:register_mob("bls_mobs:morgut", {
     on_die = function(self)
         local pos = self.object:getpos()
         if (self.inventory ~= nil) then
-            local elem
             for i = 1,32 do
                 if self.inventory[i].num~=0 then
                     local items = ItemStack(self.inventory[i].name.." "..self.inventory[i].num)
